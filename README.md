@@ -59,6 +59,46 @@ python examples/read_metrics.py --json
 ## High-Level API: MetricsReader
 
 The `MetricsReader` class provides a simplified interface for retrieving metric point values.
+The class provides a single method `read` that accepts a filter as argument together with
+start and end dates and a sample interval.
+
+A filter can specify multiple facilities for which to retrieve metrics, if not specified
+`read` returns metrics for all facilities the user has access to. A filter also specifies
+which device metrics to retrieve. A device metric consists of a device kind and a device
+kind specific metric name.
+
+For example the following filter retrieves the suction pressure for all compressors across
+all facilities:
+
+```python
+Filter(metrics=[DeviceMetric(
+    device_kind=DeviceKind.compressor,
+    name=CompressorMetric.suction_pressure,
+)
+```
+
+While the following filter retrieves both the discharge pressure of condensers and
+compressors at the "oxnard" and "riverside" facilities:
+
+```python
+Filter(
+    facilities=["oxnard", "riverside"],
+    metrics=[
+    DeviceMetric(
+        device_kind=DeviceKind.condenser,
+        name=CompressorMetric.discharge_pressure),
+    DeviceMetric(
+        device_kind=DeviceKind.compressor,
+        name=CompressorMetric.discharge_pressure)
+])
+
+```
+
+The list of available device kinds and metric names are listed in the atlas package
+[models.py](atlas/models.py) file.
+
+The list of availble facilities and their short names can be retrieved using the 
+`list_facilities.py` example.
 
 ### Example Usage
 
@@ -68,7 +108,7 @@ from atlas import MetricsReader, Filter, DeviceMetric, CompressorMetric, DeviceK
 
 # Define a filter
 filter = Filter(
-    facilities=['facility'],
+    facilities=["facility"],
     metrics=[DeviceMetric(
         device_kind=DeviceKind.compressor,
         name=CompressorMetric.suction_pressure,
