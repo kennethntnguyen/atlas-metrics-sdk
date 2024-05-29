@@ -86,7 +86,7 @@ Filter(
     metrics=[
     DeviceMetric(
         device_kind=DeviceKind.condenser,
-        name=CompressorMetric.discharge_pressure),
+        name=CondenserMetric.discharge_pressure),
     DeviceMetric(
         device_kind=DeviceKind.compressor,
         name=CompressorMetric.discharge_pressure)
