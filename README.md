@@ -138,7 +138,8 @@ data = MetricsReader().read(filter, start=start_time, end=end_time, interval=int
 
 The `AtlasClient` class provides a more flexible and lower-level interface for
 interacting with the Atlas platform. This class allows for more complex
-operations and greater control over the API interactions.
+operations and greater control over the API interactions. The class also
+provides access to hourly energy rates.
 
 ### Example Usage
 
@@ -169,6 +170,10 @@ end_time = datetime(2023, 5, 1, 23, 59, 59)
 interval = 60  # 1 minute interval
 historical_values = client.get_historical_values(org_id, agent_id, list(point_ids.values()), start=start_time, end=end_time, interval=interval)
 print(historical_values)
+
+# Get hourly energy rates
+rates = client.get_hourly_rates(org_id, agent_id)
+print(rates)
 ```
 
 ## Contributing
