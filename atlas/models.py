@@ -102,7 +102,8 @@ class VesselMetric(str, Enum):
 DeviceMetricName = Union[CompressorMetric, CondenserMetric, EvaporatorMetric, VesselMetric]
 
 class DeviceMetric(BaseModel):
-    name: DeviceMetricName
+    name: str = ""
+    alias_regex: str = ""  # Use name (preferred) or alias regular expression to match the metric
     device_kind: DeviceKind
 
 device_metric_mapping = {
@@ -116,4 +117,6 @@ def is_valid_metric(metric: DeviceMetric) -> bool:
     """
     Check if the metric is valid for the given device kind.
     """
-    return metric.name in device_metric_mapping[metric.device_kind]
+    if metric.name != "":
+        return metric.name in device_metric_mapping[metric.device_kind]
+    return metric.alias_regex != ""

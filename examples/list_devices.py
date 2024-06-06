@@ -65,6 +65,10 @@ def list_devices(debug: bool = False) -> Dict[str, Dict[str, Dict[str, Dict[str,
                     prop.key: PropertyValue(name=prop.value.name, kind=prop.value.kind, bias=prop.value.bias, alias=prop.value.alias)
                     for prop in device.properties
                 }
+                if len(device.upstream) > 0:
+                    properties_dict["upstream"] = {conn.kind: conn.device_id for conn in device.upstream}
+                if len(device.downstream) > 0:
+                    properties_dict["downstream"] = {conn.kind: conn.device_id for conn in device.downstream}
                 if len(properties_dict) > 0:
                     kind_dict[device.name] = properties_dict
             if len(kind_dict) > 0:

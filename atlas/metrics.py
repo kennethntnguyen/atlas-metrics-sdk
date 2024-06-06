@@ -1,5 +1,6 @@
 from datetime import datetime
 from collections import defaultdict
+import re
 from typing import Dict, List, Optional
 from pydantic import BaseModel
 from .atlas_client import AtlasClient
@@ -119,9 +120,26 @@ class MetricsReader:
             raise Exception(f"Error listing devices for facility {facility.display_name}: {e}")
 
     def _get_alias_filters(self, device, metrics: List[DeviceMetric]) -> List[Dict[str, str]]:
-        metric_names = [metric.name for metric in metrics]
         properties = device.properties
-        return [{"alias": prop.value.alias, "filter": prop.key} for prop in properties if prop.key in metric_names]
+
+        # Extract metric names and regex patterns
+        metric_names = {metric.name for metric in metrics}
+        metric_regexps = [re.compile(metric.alias_regex) for metric in metrics if metric.alias_regex]
+
+        # Create initial filters based on metric names
+        filters = [{"alias": prop.value.alias, "filter": prop.key} for prop in properties if prop.key in metric_names]
+
+        # Add filters based on non-empty regex patterns
+        regex_filters = [
+            {"alias": prop.value.alias, "filter": prop.key}
+            for prop in properties
+            if any(pattern.match(prop.value.alias) for pattern in metric_regexps)
+        ]
+
+        # Append regex-based filters to the main filters list
+        filters.extend(regex_filters)
+        return filters
+
 
     def _get_point_ids(self, facility, agent_id: str, aliases: List[str]) -> Dict[str, str]:
         if not aliases:
@@ -155,7 +173,7 @@ class MetricsReader:
             elif point_values.discrete:
                 vals, timestamps = point_values.discrete.values, point_values.discrete.timestamps
             else:
-                raise Exception(f"No values found in historical values for facility {facility.short_name} device {device.name} point {point_id}")
+               vals, timestamps = [], []
 
             metrics_values = MetricValues(
                 metric=DeviceMetric(name=point_filter, device_kind=device.kind),

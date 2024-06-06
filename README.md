@@ -100,6 +100,17 @@ The list of available device kinds and metric names are listed in the atlas pack
 The list of availble facilities and their short names can be retrieved using the 
 `list_facilities.py` example.
 
+Additionally a `DeviceMetric` can be configured with a regular expression to
+match property aliases. For example the following filter retrieves the motor
+current for all compressors:
+
+```python 
+Filter(metrics=[DeviceMetric(
+    device_kind=DeviceKind.compressor,
+    alias_regexp=".*_motorCurrent"
+)
+```
+
 ### Example Usage
 
 ```python
