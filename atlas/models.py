@@ -29,12 +29,18 @@ class Connection(BaseModel):
     kind: str
     direction: str
 
+class Connection(BaseModel):
+    device_id: str
+    kind: str
+
 class Device(BaseModel):
     id: str
     name: str
     alias: str
     kind: str
     properties: List[Property] = []
+    upstream: List[Connection] = []
+    downstream: List[Connection] = []
 
 class AnalogValues(BaseModel):
     timestamps: List[int]
@@ -58,6 +64,17 @@ class AggregateBy(str, Enum):
 class HistoricalValues(BaseModel):
     point_id: str
     values: Dict[AggregateBy, PointValues]
+
+class HourlyRate(BaseModel):
+    start: int
+    rate: float
+
+class HourlyRates(BaseModel):
+	usage_rate: List[HourlyRate] = []
+	maximum_demand_charge: List[HourlyRate] = []
+	time_of_use_demand_charge: List[HourlyRate] = []
+	day_ahead_market_rate: List[HourlyRate] = []
+	real_time_market_rate: List[HourlyRate] = []
 
 class DeviceKind(str, Enum):
     compressor = "compressor"

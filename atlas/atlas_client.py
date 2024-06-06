@@ -1,5 +1,5 @@
 from .http_client import AtlasHTTPClient, AtlasHTTPError
-from .models import AggregateBy, Facility, Device, HistoricalValues
+from .models import AggregateBy, Facility, Device, HistoricalValues, HourlyRates
 from datetime import datetime, timedelta
 from typing import Optional, List, Dict
 
@@ -177,5 +177,47 @@ class AtlasClient:
             response = self.client.request("POST", url, json=payload)
             values = response.json()
             return [HistoricalValues(**value) for value in values]
+        except ValueError as e:
+            raise AtlasHTTPError(f"{e}, got {response}", response=response)
+    
+    def get_hourly_rates(
+            self,
+            org_id: str,
+            agent_id: str,
+            since: Optional[datetime] = None,
+            until: Optional[datetime] = None,
+    ) -> HourlyRates:
+        """
+        Get hourly rates for a given facility.
+
+        Parameters
+        ----------
+        org_id : str
+            organization ID associated with the facility as returned by list_facilities
+        agent_id : str
+            agent ID associated with the facility as returned by list_facilities
+        since : Optional[datetime], optional
+            start time for the query (inclusive), by default 24 hours ago
+        until : Optional[datetime], optional
+            end time for the query (exclusive), by default now
+        
+        Returns
+        -------
+        Rates
+            hourly rates
+        
+        Raises
+        ------
+        AtlasHTTPError
+            Raised if an error occurs while making the request
+        """
+        url = f"/orgs/{org_id}/agents/{agent_id}/rates"
+        params = {
+            "since": since.strftime("%Y-%m-%dT%H:%M:%SZ") if since else (datetime.now() - timedelta(hours=24)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "until": until.strftime("%Y-%m-%dT%H:%M:%SZ") if until else datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        }
+        try:
+            response = self.client.request("GET", url, params=params)
+            return HourlyRates(**response.json())
         except ValueError as e:
             raise AtlasHTTPError(f"{e}, got {response}", response=response)
