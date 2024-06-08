@@ -152,7 +152,7 @@ from datetime import datetime
 from atlas import RatesReader
 
 # Define a filter
-filter = Filter(facilities=["facility"])
+filter = RateFilter(facilities=["facility"])
 
 # Retrieve hourly energy rates
 start_time = datetime(2023, 5, 1, 0, 0, 0)
