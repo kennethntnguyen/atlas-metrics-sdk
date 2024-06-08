@@ -22,7 +22,7 @@ class MetricValues(BaseModel):
 
 class MetricsReader:
     """
-    High level API Client for retrieving metrics point values from the Atlas platform.
+    High level API Client for retrieving metrics point values from the ATLAS platform.
     """
 
     def __init__(self, refresh_token: Optional[str] = None, debug: Optional[bool] = False):

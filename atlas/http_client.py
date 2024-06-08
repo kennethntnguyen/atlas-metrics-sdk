@@ -7,20 +7,20 @@ import logging, requests, tomllib
 
 
 class AtlasConfigError(Exception):
-    """Custom exception class for Atlas configuration errors."""
+    """Custom exception class for configuration errors."""
     def __init__(self, message):
         self.message = message
 
 
 class AuthError(Exception):
-    """Custom exception class for Atlas authentication errors."""
+    """Custom exception class for authentication errors."""
     def __init__(self, message, response):
         self.message = message
         self.response = response
 
 
 class AtlasHTTPError(requests.HTTPError):
-    """Custom exception class for Atlas HTTP errors."""
+    """Custom exception class for HTTP errors."""
     def __init__(self, message, response=None):
         super().__init__(message)
         self.response = response
@@ -161,7 +161,7 @@ class AtlasHTTPClient(requests.Session):
 
     def request(self, method: str, url: str, **kwargs) -> requests.Response:
         """
-        Make an HTTP request to the Atlas API with the provided method and URL.
+        Make an HTTP request to the ATLAS API with the provided method and URL.
 
         Parameters
         ----------

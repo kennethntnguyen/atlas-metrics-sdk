@@ -5,7 +5,7 @@ from typing import Optional, List, Dict
 
 class AtlasClient:
     """
-    API Client for retrieving historical point values from the Atlas platform.
+    API Client for retrieving historical point values from the ATLAS platform.
     """
 
     def __init__(
