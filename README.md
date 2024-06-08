@@ -1,12 +1,12 @@
-# Atlas Metrics SDK
+# ATLAS Metrics SDK
 
 ## Overview
 
-The Atlas Metrics SDK is a Python library that provides a simple interface for
-retrieving metrics from the Atlas platform.  The library provides both
-high-level and low-level APIs, allowing users to choose the appropriate level of
-abstraction based on their needs. The high-level API simplifies usage, while the
-low-level API offers more flexibility and control.
+The ATLAS Metrics SDK is a Python library that provides a simple interface for
+retrieving metrics from the (ATLAS platform)[https://crossnokaye.com].  The
+library provides both high-level and low-level APIs, allowing users to choose
+the appropriate level of abstraction based on their needs. The high-level API
+simplifies usage, while the low-level API offers more flexibility and control.
 
 ## Installation
 
@@ -41,19 +41,21 @@ The `examples` directory contains sample code that demonstrates how to use the
 library. To run the examples, execute the following command:
 
 ```bash
-python examples/read_metrics.py
+python examples/list_facilities.py
+python examples/read_metrics.py <facility short name>
 ```
 
 The examples are:
 
 - `read_metrics.py`: Demonstrates how to retrieve metric values using the high-level API.
+- `read_rates.py`: Demonstrates how to retrieve hourly energy rates using the high-level API.
 - `list_facilities.py`: Demonstrates how to list facilities using the low-level API.
 - `list_devices.py`: Demonstrates how to list devices for a facility using the low-level API.
 
 Each example can print the output in plain text or JSON format. To print the output in JSON format, add the `--json` flag:
 
 ```bash
-python examples/read_metrics.py --json
+python examples/list_facilities.py --json
 ```
 
 ## High-Level API: MetricsReader
@@ -94,7 +96,7 @@ Filter(
 
 ```
 
-The list of available device kinds and metric names are listed in the atlas package
+The list of available device kinds and metric names are listed in the `atlas` package
 [models.py](atlas/models.py) file.
 
 The list of availble facilities and their short names can be retrieved using the 
@@ -134,10 +136,35 @@ interval = 60  # 1 minute interval
 data = MetricsReader().read(filter, start=start_time, end=end_time, interval=interval)
 ```
 
+## High-Level API: RatesReader
+
+The `RatesReader` class provides a simplified interface for retrieving hourly energy rates.
+The class provides a single method `read` that accepts a filter as argument together with
+start and end dates.
+
+A filter can specify multiple facilities for which to retrieve rates, if not specified
+`read` returns rates for all facilities the user has access to.
+
+### Example Usage
+
+```python
+from datetime import datetime
+from atlas import RatesReader
+
+# Define a filter
+filter = Filter(facilities=["facility"])
+
+# Retrieve hourly energy rates
+start_time = datetime(2023, 5, 1, 0, 0, 0)
+end_time = datetime(2023, 5, 1, 23, 59, 59)
+
+rates = RatesReader().read(filter, start=start_time, end=end_time)
+```
+
 ## Low-Level API: AtlasClient
 
 The `AtlasClient` class provides a more flexible and lower-level interface for
-interacting with the Atlas platform. This class allows for more complex
+interacting with the ATLAS platform. This class allows for more complex
 operations and greater control over the API interactions. The class also
 provides access to hourly energy rates.
 

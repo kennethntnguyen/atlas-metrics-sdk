@@ -221,3 +221,19 @@ class AtlasClient:
             return HourlyRates(**response.json())
         except ValueError as e:
             raise AtlasHTTPError(f"{e}, got {response}", response=response)
+
+    def filter_facilities(self, filter: List[str]) -> List[Facility]:
+        try:
+            all_facilities = self.list_facilities()
+        except Exception as e:
+            raise Exception(f"Error listing facilities: {e}")
+
+        if not filter:
+            return all_facilities
+
+        facilities = [f for f in all_facilities if f.short_name in filter]
+        if len(facilities) != len(filter):
+            not_found = set(filter) - set(f.short_name for f in facilities)
+            raise Exception(f"Facilities {', '.join(not_found)} not found")
+
+        return facilities

@@ -72,7 +72,7 @@ class MetricsReader:
             if not is_valid_metric(metric):
                 raise Exception(f"Invalid metrics type {metric}")
 
-        facilities = self._get_facilities(filter.facilities)
+        facilities = self.client.filter_facilities(filter.facilities)
 
         result = defaultdict(list)
         for facility in facilities:
@@ -96,22 +96,6 @@ class MetricsReader:
                 self._process_historical_values(result, facility, device, alias_filters, point_map, hvalues)
 
         return result
-
-    def _get_facilities(self, facility_filter: List[str]) -> List:
-        try:
-            all_facilities = self.client.list_facilities()
-        except Exception as e:
-            raise Exception(f"Error listing facilities: {e}")
-
-        if not facility_filter:
-            return all_facilities
-
-        facilities = [f for f in all_facilities if f.short_name in facility_filter]
-        if len(facilities) != len(facility_filter):
-            not_found = set(facility_filter) - set(f.short_name for f in facilities)
-            raise Exception(f"Facilities {not_found} not found")
-
-        return facilities
 
     def _get_devices(self, facility, agent_id: str) -> List:
         try:
