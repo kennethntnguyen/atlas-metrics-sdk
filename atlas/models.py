@@ -118,5 +118,6 @@ def is_valid_metric(metric: DeviceMetric) -> bool:
     Check if the metric is valid for the given device kind.
     """
     if metric.name != "":
-        return metric.name in device_metric_mapping[metric.device_kind]
+        valid_metrics = [e.value for e in device_metric_mapping[metric.device_kind]]
+        return metric.name in valid_metrics
     return metric.alias_regex != ""
