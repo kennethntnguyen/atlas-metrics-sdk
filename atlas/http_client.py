@@ -3,7 +3,7 @@ from os import environ
 from pathlib import Path
 from typing import Optional, Union
 from urllib.parse import urljoin
-import logging, requests, toml
+import logging, requests, tomli
 
 
 class AtlasConfigError(Exception):
@@ -108,7 +108,8 @@ class AtlasHTTPClient(requests.Session):
                 self.DEFAULT_CONFIG_FILE_PATH}"""
             )
 
-        atlas_config_file = toml.load(self.DEFAULT_CONFIG_FILE_PATH)
+        with open(self.DEFAULT_CONFIG_FILE_PATH, "rb") as fn:
+            atlas_config_file = tomli.load(fn)
 
         refresh_token = atlas_config_file.get("production", {}).get(
             self.REFRESH_TOKEN, None
